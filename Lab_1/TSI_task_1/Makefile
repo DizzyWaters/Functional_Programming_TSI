@@ -11,4 +11,4 @@ run: $(TARGET)
 clean_all:
 	-rm main.o main.hi main 
 clean_trash:
-	-rm main.o main.hi
+	-rm *.o *.hi

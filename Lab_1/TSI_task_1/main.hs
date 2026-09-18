@@ -5,6 +5,8 @@
 
 module Main where
 
+-- if in same folder compiler aka linker don't need additional flags - nice
+import qualified Task1
 
 -- ok, here start some fuzzy crap, IO in hasskel :: IO () is something like void, but not exactly because it
 -- breaks the paradigm, so they called it here the "monad" it roots that it's some deep philosophy crap... after it for sure megrated to math
@@ -32,8 +34,16 @@ readFileMode = do
 
     input <- readFile fileName
 
-    putStrLn "output frim file:"
+    putStrLn "output from file:"
     putStrLn input
+
+-- Ok, I found out getContent function that can be used instead of all the thing that are up there.
+
+superMode :: IO ()
+superMode = do
+    input <- getContents
+    putStrLn "super mode!"
+    putStrLn  (Task1.solve(input))
 
 -- End of filereading module
 
@@ -43,5 +53,6 @@ readFileMode = do
 main :: IO ()
 main = do
    --manualMode
-    readFileMode
+   --readFileMode
+   superMode
 
