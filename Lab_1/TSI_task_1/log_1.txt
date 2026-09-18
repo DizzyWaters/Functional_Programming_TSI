@@ -1,0 +1,28 @@
+
+main.hs:15:15: error:
+    • Expected kind ‘k1 -> *’, but ‘IO ()’ has kind ‘*’
+    • In the type ‘IO () manualMode’
+      In a pattern type signature: IO () manualMode
+      In the pattern: manualMode :: IO () manualMode
+   |
+15 | manualMode :: IO ()
+   |               ^^^^^...
+
+main.hs:30:17: error:
+    • Expected kind ‘k0 -> *’, but ‘IO ()’ has kind ‘*’
+    • In the type ‘IO () readFileMode’
+      In a pattern type signature: IO () readFileMode
+      In the pattern: readFileMode :: IO () readFileMode
+   |
+30 | readFileMode :: IO ()
+   |                 ^^^^^...
+
+main.hs:44:9: error:
+    • Expected kind ‘k2 -> *’, but ‘IO ()’ has kind ‘*’
+    • In the type ‘IO () main’
+      In a pattern type signature: IO () main
+      In the pattern: main :: IO () main
+   |
+44 | main :: IO ()
+   |         ^^^^^...
+make: *** [Makefile:5: main] Error 1

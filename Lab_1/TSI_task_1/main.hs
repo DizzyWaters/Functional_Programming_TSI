@@ -3,17 +3,15 @@
 
 -- let's try
 
-
 module Main where
 
-import System.IO
 
 -- ok, here start some fuzzy crap, IO in hasskel :: IO () is something like void, but not exactly because it
 -- breaks the paradigm, so they called it here the "monad" it roots that it's some deep philosophy crap... after it for sure megrated to math
 -- and as the Hasskel is more math languge it came here. I don't want to follow this deeper.
     -- But anyway monads, here is something that goes out of pure functions and it may have effect of how the code is assambled.
 manualMode :: IO ()
-    manualMode = do
+manualMode = do
     putStrLn "Manual mode enabled."
     putStrLn "Enter input:"
     input <- getLine
@@ -28,9 +26,9 @@ manualMode :: IO ()
 
  -- just a blank will try to read files, parse it. and tast it via Makefile
 readFileMode :: IO ()
-    readFileMode = do
+readFileMode = do
     fileName <- getLine
-    putStrLn "testing next file" ++ fileName
+    putStrLn ("testing next file" ++ fileName)
 
     input <- readFile fileName
 
@@ -42,6 +40,6 @@ readFileMode :: IO ()
 --                  *** Enerty point ***
 
 main :: IO ()
-    main do
-        manualMode
+main = do
+    manualMode
 
