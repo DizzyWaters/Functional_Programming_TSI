@@ -27,7 +27,7 @@ manualMode = do
  -- just a blank will try to read files, parse it. and tast it via Makefile
 readFileMode :: IO ()
 readFileMode = do
-    fileName <- getLine
+    let fileName = "task_1.txt"
     putStrLn ("testing next file" ++ fileName)
 
     input <- readFile fileName
@@ -39,7 +39,9 @@ readFileMode = do
 
 --                  *** Enerty point ***
 
+-- here we can comment manual part and vise-versa with readFile part for manual and auto test the tasks
 main :: IO ()
 main = do
-    manualMode
+   --manualMode
+    readFileMode
 
