@@ -1,0 +1,36 @@
+Test 1: SUCCESS
+Test 2: FAIL
+Expected:
+10
+Got:
+a
+
+Test 3: FAIL
+Expected:
+99
+Got:
+
+Test 4: FAIL
+Expected:
+-3
+Got:
+
+Test 5: SUCCESS
+Test 6: SUCCESS
+Test 7: SUCCESS
+Test 8: FAIL
+Expected:
+12
+Got:
+c
+
+Test 9: FAIL
+Expected:
+9999
+Got:
+
+Test 10: FAIL
+Expected:
+108
+Got:
+

@@ -42,7 +42,6 @@ readFileMode = do
 superMode :: IO ()
 superMode = do
     input <- getContents
-    putStrLn "super mode!"
     putStrLn  (Task1.solve(input)) -- takes string and should return string
 
 -- End of filereading module

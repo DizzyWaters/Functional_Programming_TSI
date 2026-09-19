@@ -13,20 +13,20 @@ listString x =
 
 intString :: Int -> String
 intString x =
-    [intToDigit x]
-    
+    show x    
 
 addtList :: [Int] -> [Int]
 addtList x = map (+1) x
 
 maximumInList :: [Int] -> Int
-maximumInList [x] = x
+maximumInList [x] = x -- checks if there is only one variable in the list
+maximumInList [] = 0
 maximumInList (x:xs) =
     let i = maximumInList xs
     in
       if x > i
-      then x
-      else i
+       then x
+       else i
 
 -- main task
 solve :: String -> String

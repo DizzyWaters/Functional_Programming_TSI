@@ -1,0 +1,39 @@
+
+Task1.hs:23:21: error:
+    • Couldn't match expected type ‘Maybe Int’ with actual type ‘Int’
+    • In the expression: x
+      In an equation for ‘maximumInList’: maximumInList [x] = x
+   |
+23 | maximumInList [x] = x -- checks if there is only one variable in the list
+   |                     ^
+
+Task1.hs:28:14: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘Maybe Int’
+    • In the second argument of ‘(>)’, namely ‘i’
+      In the expression: x > i
+      In the expression: if x > i then x else i
+   |
+28 |       if x > i
+   |              ^
+
+Task1.hs:29:13: error:
+    • Couldn't match expected type ‘Maybe Int’ with actual type ‘Int’
+    • In the expression: x
+      In the expression: if x > i then x else i
+      In the expression:
+        let i = maximumInList xs in if x > i then x else i
+   |
+29 |        then x
+   |             ^
+
+Task1.hs:35:21: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘Maybe Int’
+    • In the first argument of ‘intString’, namely
+        ‘(maximumInList (toNumbers (x)))’
+      In the expression: intString (maximumInList (toNumbers (x)))
+      In an equation for ‘solve’:
+          solve x = intString (maximumInList (toNumbers (x)))
+   |
+35 | solve x = intString(maximumInList(toNumbers(x)))
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+make: *** [Makefile:5: main] Error 1
