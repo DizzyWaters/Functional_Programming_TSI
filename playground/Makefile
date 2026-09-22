@@ -10,4 +10,4 @@ run: $(TARGET)
 	./$(TARGET)
 
 clean:
-	-rm main.o main.hi main 
+	-rm *.o *.hi main 
