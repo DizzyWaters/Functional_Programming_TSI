@@ -1,0 +1,51 @@
+ghc main.hs -o main
+Test 1: FAIL
+Expected:
+5
+Got:
+5
+Test 2: FAIL
+Expected:
+10
+Got:
+10
+Test 3: FAIL
+Expected:
+99
+Got:
+99
+Test 4: FAIL
+Expected:
+-3
+Got:
+-3
+Test 5: FAIL
+Expected:
+5
+Got:
+5
+Test 6: FAIL
+Expected:
+7
+Got:
+7
+Test 7: FAIL
+Expected:
+0
+Got:
+0
+Test 8: FAIL
+Expected:
+12
+Got:
+12
+Test 9: FAIL
+Expected:
+9999
+Got:
+9999
+Test 10: FAIL
+Expected:
+108
+Got:
+108

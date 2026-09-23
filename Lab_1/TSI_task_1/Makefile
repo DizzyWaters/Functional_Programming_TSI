@@ -36,21 +36,19 @@ run_super: super
 	./$(TARGET)
 
 # Automatic tests use the default mode (main = interact Task1.solve)
+# Command substitution removes trailing newlines, so "5" and "5\n" compare equal.
 test: default
 	@for i in $$(seq 1 10); do \
-		./$(TARGET) < tests/task_1_test_$$i.txt > tests/output.tmp; \
-		if cmp -s tests/output.tmp tests/task_1_test_$${i}_expected.txt; then \
+		actual=$$(./$(TARGET) < tests/task_1_test_$$i.txt); \
+		expected=$$(cat tests/task_1_test_$${i}_expected.txt); \
+		if [ "$$actual" = "$$expected" ]; then \
 			echo "Test $$i: SUCCESS"; \
 		else \
 			echo "Test $$i: FAIL"; \
-			echo "Expected:"; \
-			cat tests/task_1_test_$${i}_expected.txt; \
-			echo "Got:"; \
-			cat tests/output.tmp; \
-			echo; \
+			echo "Expected: $$expected"; \
+			echo "Got:      $$actual"; \
 		fi; \
 	done
-	@rm -f tests/output.tmp
 
 clean_all:
 	rm -f $(TARGET) *.o *.hi tests/output.tmp
