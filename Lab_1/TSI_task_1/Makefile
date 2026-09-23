@@ -1,15 +1,44 @@
 TARGET = main
 SRC = main.hs
+GHC = ghc
 
-$(TARGET): $(SRC)
-	ghc $(SRC) -o $(TARGET)
+.PHONY: all default manual read super run run_manual run_read run_super test clean_all clean_trash
 
+# Default mode: uses the #else branch in main.hs
+all: default
 
-run: $(TARGET)
+default:
+	$(GHC) $(SRC) -o $(TARGET)
+
+# Compile with: #ifdef MANUAL
+manual:
+	$(GHC) -DMANUAL $(SRC) -o $(TARGET)
+
+# Compile with: #ifdef READM
+read:
+	$(GHC) -DREADM $(SRC) -o $(TARGET)
+
+# Compile with: #ifdef SUPERM
+super:
+	$(GHC) -DSUPERM $(SRC) -o $(TARGET)
+
+# Build and run each mode
+run: default
 	./$(TARGET)
-test: main
+
+run_manual: manual
+	./$(TARGET)
+
+run_read: read
+	./$(TARGET)
+
+run_super: super
+	./$(TARGET)
+
+# Automatic tests use the default mode (main = interact Task1.solve)
+test: default
 	@for i in $$(seq 1 10); do \
-		./main < tests/task_1_test_$$i.txt > tests/output.tmp; \
+		./$(TARGET) < tests/task_1_test_$$i.txt > tests/output.tmp; \
 		if cmp -s tests/output.tmp tests/task_1_test_$${i}_expected.txt; then \
 			echo "Test $$i: SUCCESS"; \
 		else \
@@ -24,6 +53,7 @@ test: main
 	@rm -f tests/output.tmp
 
 clean_all:
-	-rm main.o main.hi main tests/output.tmp 
+	rm -f $(TARGET) *.o *.hi tests/output.tmp
+
 clean_trash:
-	-rm *.o *.hi
+	rm -f *.o *.hi
