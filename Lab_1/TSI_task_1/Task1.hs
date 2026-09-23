@@ -21,7 +21,7 @@ addtList x = map (+1) x
 maximumInList :: [Int] -> Int
 maximumInList [x] = x -- checks if there is only one variable in the list
 maximumInList [] = 0
-maximumInList (x:xs) =
+maximumInList (x:xs) = -- ok here is the beaf, (a:b) the (:) thing is the syntax way for recursion
     let i = maximumInList xs
     in
       if x > i

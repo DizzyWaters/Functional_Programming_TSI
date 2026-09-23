@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 -- the global idea is to make a main module that will accept other modeles for different tasks
 -- It should accept manual tests from the shell, also take a files as I/O for auto tests
 
@@ -46,12 +47,25 @@ superMode = do
 
 -- End of filereading module
 
+
+-- Ok after few days I found the way make all this thing with main = interact.
+-- Probobly this is best way to make a program as I wanted.
+
 --                  *** Enerty point ***
+
+--  ## I can use C preprocessor !
 
 -- here we can comment manual part and vise-versa with readFile part for manual and auto test the tasks
 main :: IO ()
+#ifdef MANUAL
 main = do
-   --manualMode
-   --readFileMode
-   superMode
-
+    manualMode
+#elif READM
+main = do 
+    readFileMode
+#elif SUPERM
+main = do 
+    superMode
+#else
+main = interact Task1.solve  
+#endif
