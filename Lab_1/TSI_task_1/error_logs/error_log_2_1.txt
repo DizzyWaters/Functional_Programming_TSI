@@ -1,0 +1,62 @@
+
+Task_1_var_1.hs:14:11: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘[Int]’
+    • In the second argument of ‘(>)’, namely ‘y’
+      In the expression: x > y
+      In a stmt of a pattern guard for
+                     an equation for ‘bubble’:
+        x > y
+   |
+14 |     | x > y = y : bubble (x:xs)
+   |           ^
+
+Task_1_var_1.hs:14:15: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘[Int]’
+    • In the first argument of ‘(:)’, namely ‘y’
+      In the expression: y : bubble (x : xs)
+      In an equation for ‘bubble’:
+          bubble (x : xs : y)
+            | x > y = y : bubble (x : xs)
+            | otherwise = x : bubble (y : xs)
+   |
+14 |     | x > y = y : bubble (x:xs)
+   |               ^
+
+Task_1_var_1.hs:14:29: error:
+    • Couldn't match expected type ‘[Int]’ with actual type ‘Int’
+    • In the second argument of ‘(:)’, namely ‘xs’
+      In the first argument of ‘bubble’, namely ‘(x : xs)’
+      In the second argument of ‘(:)’, namely ‘bubble (x : xs)’
+   |
+14 |     | x > y = y : bubble (x:xs)
+   |                             ^^
+
+Task_1_var_1.hs:15:31: error:
+    • Couldn't match expected type ‘Int’ with actual type ‘[Int]’
+    • In the first argument of ‘(:)’, namely ‘y’
+      In the first argument of ‘bubble’, namely ‘(y : xs)’
+      In the second argument of ‘(:)’, namely ‘bubble (y : xs)’
+   |
+15 |     | otherwise = x : bubble (y:xs)
+   |                               ^
+
+Task_1_var_1.hs:15:33: error:
+    • Couldn't match expected type ‘[Int]’ with actual type ‘Int’
+    • In the second argument of ‘(:)’, namely ‘xs’
+      In the first argument of ‘bubble’, namely ‘(y : xs)’
+      In the second argument of ‘(:)’, namely ‘bubble (y : xs)’
+   |
+15 |     | otherwise = x : bubble (y:xs)
+   |                                 ^^
+
+Task_1_var_1.hs:24:15: error:
+    • Couldn't match type ‘[Char]’ with ‘Char’
+      Expected: Int -> Char
+        Actual: Int -> String
+    • In the first argument of ‘map’, namely ‘show’
+      In the first argument of ‘($)’, namely ‘map show’
+      In the expression: map show $ bubbleSort $ map read (words x)
+   |
+24 | solve x = map show $ bubbleSort $ map read (words x) 
+   |               ^^^^
+make: *** [Makefile:11: default] Error 1

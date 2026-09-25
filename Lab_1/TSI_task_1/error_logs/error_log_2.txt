@@ -1,0 +1,17 @@
+
+Task_1_var_1.hs:12:1: error:
+    Multiple declarations of ‘bubble’
+    Declared at: Task_1_var_1.hs:11:1
+                 Task_1_var_1.hs:12:1
+   |
+12 | bubble :: [x] = [x] -- check same
+   | ^^^^^^
+
+Task_1_var_1.hs:13:1: error:
+    Multiple declarations of ‘bubble’
+    Declared at: Task_1_var_1.hs:11:1
+                 Task_1_var_1.hs:13:1
+   |
+13 | bubble (x:xs:y)
+   | ^^^^^^
+make: *** [Makefile:11: default] Error 1
