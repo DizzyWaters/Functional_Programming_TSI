@@ -11,7 +11,7 @@ bubble :: [Int] -> [Int]
 bubble [] = [] -- check empty list
 bubble [x] = [x] -- check same
 bubble (x:y:xs)
-    | x > y = y : bubble (x:xs)
+    | x < y = y : bubble (x:xs)
     | otherwise = x : bubble (y:xs)
 
 bubbleSort :: [Int] -> [Int]

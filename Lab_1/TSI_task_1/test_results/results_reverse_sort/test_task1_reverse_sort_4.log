@@ -1,0 +1,3 @@
+Reverse sort test 4: SUCCESS
+Expected: 8 3 0 -1 -5
+Got:      8 3 0 -1 -5
