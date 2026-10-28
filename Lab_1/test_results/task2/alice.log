@@ -1,0 +1,11 @@
+FAIL alice
+Expected exit: 0; actual exit: 1
+--- expected
++++ actual
+@@ -1 +1 @@
+-ecilA
++
+STDERR:
+main: Task 2 is not implemented yet
+CallStack (from HasCallStack):
+  error, called at src/Task2.hs:6:9 in main:Task2

@@ -1,0 +1,3 @@
+PASS case_08
+Expected exit: 0; actual exit: 0
+STDERR:
