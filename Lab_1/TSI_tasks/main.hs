@@ -10,6 +10,7 @@ module Main where
 import qualified Task1
 import qualified Task_1_var_1
 import qualified Task2
+import qualified Task3
 -- ok, here start some fuzzy crap, IO in hasskel :: IO () is something like void, but not exactly because it
 -- breaks the paradigm, so they called it here the "monad" it roots that it's some deep philosophy crap... after it for sure megrated to math
 -- and as the Hasskel is more math languge it came here. I don't want to follow this deeper.
@@ -69,6 +70,8 @@ main = do
     superMode
 #elif defined(TASK2)
 main = interact Task2.solve
+#elif defined(TASK3)
+main = interact Task3.solve
 #else
 main = interact Task_1_var_1.solve  
 #endif
