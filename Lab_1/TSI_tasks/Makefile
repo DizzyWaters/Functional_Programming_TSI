@@ -3,7 +3,9 @@ SRC = main.hs
 GHC = ghc
 
 TEST1_DIR = tests/test_1
+TASK2_TEST_DIR = tests/task2_tests
 REVERSE_TEST_DIR = tests/task1_reverse_sort_tests/tests
+TASK2_RESULTS_DIR = test_results/results_2
 
 RESULTS_DIR = test_results
 TEST1_RESULTS_DIR = $(RESULTS_DIR)/results_1
@@ -96,6 +98,22 @@ test_reverse_sort: default
 		fi; \
 	done
 	@echo "Logs saved in $(REVERSE_RESULTS_DIR)/"
+# Task 2 tests automation
+
+test_task2: task2
+	@mkdir -p $(TASK2_RESULTS_DIR)
+	@failed=0; \
+	for i in 1 2 3 4 5; do \
+		if ./$(TARGET) < $(TASK2_TEST_DIR)/task_2_test$$i.txt > $(TASK2_RESULTS_DIR)/task_2_test$$i.log \
+		   && cmp -s $(TASK2_TEST_DIR)/task_2_test$${i}_expected.txt $(TASK2_RESULTS_DIR)/task_2_test$$i.log; then \
+			echo "Task 2 test $$i: SUCCESS"; \
+		else \
+			echo "Task 2 test $$i: FAIL"; \
+			failed=1; \
+		fi; \
+	done; \
+	exit $$failed
+
 
 # Run both test suites
 test_all: test test_reverse_sort

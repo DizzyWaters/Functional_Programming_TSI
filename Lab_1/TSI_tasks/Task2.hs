@@ -19,5 +19,6 @@ reverseName (x:xs) = reverseName xs ++ [x]
 
 
 solve :: String -> String
+-- this is needed for automated testing, bash eats one space so tests fails without it
+-- it can be omited if using manually!
 solve input = reverseName (takeWhile (/= '\n') input)
-
