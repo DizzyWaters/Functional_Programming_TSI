@@ -8,6 +8,9 @@ REVERSE_TEST_DIR = tests/task1_reverse_sort_tests/tests
 RESULTS_DIR = test_results
 TEST1_RESULTS_DIR = $(RESULTS_DIR)/results_1
 REVERSE_RESULTS_DIR = $(RESULTS_DIR)/results_reverse_sort
+# task 2
+task2:
+	$(GHC) -fforce-recomp -DTASK2 $(SRC) -o $(TARGET)
 
 .PHONY: all default manual read super run run_manual run_read run_super \
         test test_reverse_sort test_all clean_all clean_trash
@@ -41,6 +44,9 @@ run_read: read
 	./$(TARGET)
 
 run_super: super
+	./$(TARGET)
+
+run_task2: task2
 	./$(TARGET)
 
 # Original Task 1 tests

@@ -1,0 +1,677 @@
+diff --git a/Lab_1/TSI_tasks/Makefile b/Lab_1/TSI_tasks/Makefile
+index 1a55086..a947e74 100644
+--- a/Lab_1/TSI_tasks/Makefile
++++ b/Lab_1/TSI_tasks/Makefile
+@@ -1,104 +1,71 @@
+ TARGET = main
+ SRC = main.hs
++SOURCES = $(wildcard *.hs)
+ GHC = ghc
+ 
+ TEST1_DIR = tests/test_1
+ REVERSE_TEST_DIR = tests/task1_reverse_sort_tests/tests
+-
+ RESULTS_DIR = test_results
+ TEST1_RESULTS_DIR = $(RESULTS_DIR)/results_1
+ REVERSE_RESULTS_DIR = $(RESULTS_DIR)/results_reverse_sort
+ 
+-.PHONY: all default manual read super run run_manual run_read run_super \
+-        test test_reverse_sort test_all clean_all clean_trash
+-
+-# Default mode: uses the #else branch in main.hs
+-all: default
+-
+-default:
+-	$(GHC) $(SRC) -o $(TARGET)
+-
+-# Compile with: #ifdef MANUAL
+-manual:
+-	$(GHC) -DMANUAL $(SRC) -o $(TARGET)
+-
+-# Compile with: #ifdef READM
+-read:
+-	$(GHC) -DREADM $(SRC) -o $(TARGET)
+-
+-# Compile with: #ifdef SUPERM
+-super:
+-	$(GHC) -DSUPERM $(SRC) -o $(TARGET)
+-
+-# Build and run each mode
+-run: default
+-	./$(TARGET)
+-
+-run_manual: manual
+-	./$(TARGET)
+-
+-run_read: read
+-	./$(TARGET)
+-
+-run_super: super
+-	./$(TARGET)
+-
+-# Original Task 1 tests
+-# Input:    tests/test_1/task_1_test_N.txt
+-# Expected: tests/test_1/task_1_test_N_expected.txt
+-# Logs:     test_results/results_1/task_1_test_N.log
+-test: default
+-	@mkdir -p $(TEST1_RESULTS_DIR)
+-	@for i in $$(seq 1 10); do \
+-		actual=$$(./$(TARGET) < $(TEST1_DIR)/task_1_test_$$i.txt); \
+-		expected=$$(cat $(TEST1_DIR)/task_1_test_$${i}_expected.txt); \
+-		log="$(TEST1_RESULTS_DIR)/task_1_test_$$i.log"; \
+-		if [ "$$actual" = "$$expected" ]; then \
+-			echo "Test $$i: SUCCESS"; \
+-			printf "Test %s: SUCCESS\nExpected: %s\nGot:      %s\n" \
+-				"$$i" "$$expected" "$$actual" > "$$log"; \
++.PHONY: all test test_reverse_sort test_all clean_all clean_trash
++
++all: $(TARGET)
++
++$(TARGET): $(SOURCES) Makefile
++	$(GHC) --make $(SRC) -o $(TARGET)
++
++# Share the runner while retaining the existing fixture and log names.
++test: MODE = max
++test: INPUT_PREFIX = $(TEST1_DIR)/task_1_test_
++test: EXPECTED_PREFIX = $(TEST1_DIR)/task_1_test_
++test: EXPECTED_SUFFIX = _expected
++test: LOG_DIR = $(TEST1_RESULTS_DIR)
++test: LOG_PREFIX = task_1_test_
++
++test_reverse_sort: MODE = sort
++test_reverse_sort: INPUT_PREFIX = $(REVERSE_TEST_DIR)/test_task1_reverse_sort_
++test_reverse_sort: EXPECTED_PREFIX = $(REVERSE_TEST_DIR)/expected_task1_reverse_sort_
++test_reverse_sort: EXPECTED_SUFFIX =
++test_reverse_sort: LOG_DIR = $(REVERSE_RESULTS_DIR)
++test_reverse_sort: LOG_PREFIX = test_task1_reverse_sort_
++
++test test_reverse_sort: $(TARGET)
++	@mkdir -p "$(LOG_DIR)"
++	@failed=0; \
++	for i in 1 2 3 4 5 6 7 8 9 10; do \
++		input="$(INPUT_PREFIX)$$i.txt"; \
++		expected_file="$(EXPECTED_PREFIX)$${i}$(EXPECTED_SUFFIX).txt"; \
++		log="$(LOG_DIR)/$(LOG_PREFIX)$$i.log"; \
++		: > "$$log" || exit 1; \
++		if [ ! -r "$$input" ] || [ ! -r "$$expected_file" ]; then \
++			printf 'Missing or unreadable fixture: %s or %s\n' "$$input" "$$expected_file" >> "$$log"; \
++			status=1; \
+ 		else \
+-			echo "Test $$i: FAIL"; \
+-			echo "Expected: $$expected"; \
+-			echo "Got:      $$actual"; \
+-			printf "Test %s: FAIL\nExpected: %s\nGot:      %s\n" \
+-				"$$i" "$$expected" "$$actual" > "$$log"; \
++			actual=$$(./$(TARGET) $(MODE) < "$$input" 2>> "$$log"); \
++			status=$$?; \
++			expected=$$(cat "$$expected_file") || status=1; \
++			printf 'Exit status: %s\nExpected: %s\nGot:      %s\n' "$$status" "$$expected" "$$actual" >> "$$log"; \
++			if [ "$$actual" != "$$expected" ]; then status=1; fi; \
+ 		fi; \
+-	done
+-	@echo "Logs saved in $(TEST1_RESULTS_DIR)/"
+-
+-# Task 1 descending/reverse sort tests
+-# Input:    tests/task1_reverse_sort_tests/tests/test_task1_reverse_sort_N.txt
+-# Expected: tests/task1_reverse_sort_tests/tests/expected_task1_reverse_sort_N.txt
+-# Logs:     test_results/results_reverse_sort/test_task1_reverse_sort_N.log
+-test_reverse_sort: default
+-	@mkdir -p $(REVERSE_RESULTS_DIR)
+-	@for i in $$(seq 1 10); do \
+-		actual=$$(./$(TARGET) < $(REVERSE_TEST_DIR)/test_task1_reverse_sort_$$i.txt); \
+-		expected=$$(cat $(REVERSE_TEST_DIR)/expected_task1_reverse_sort_$$i.txt); \
+-		log="$(REVERSE_RESULTS_DIR)/test_task1_reverse_sort_$$i.log"; \
+-		if [ "$$actual" = "$$expected" ]; then \
+-			echo "Reverse sort test $$i: SUCCESS"; \
+-			printf "Reverse sort test %s: SUCCESS\nExpected: %s\nGot:      %s\n" \
+-				"$$i" "$$expected" "$$actual" > "$$log"; \
+-		else \
+-			echo "Reverse sort test $$i: FAIL"; \
+-			echo "Expected: $$expected"; \
+-			echo "Got:      $$actual"; \
+-			printf "Reverse sort test %s: FAIL\nExpected: %s\nGot:      %s\n" \
+-				"$$i" "$$expected" "$$actual" > "$$log"; \
+-		fi; \
+-	done
+-	@echo "Logs saved in $(REVERSE_RESULTS_DIR)/"
+-
+-# Run both test suites
+-test_all: test test_reverse_sort
++		if [ "$$status" -eq 0 ]; then result=SUCCESS; else result=FAIL; failed=1; fi; \
++		printf '%s test %s: %s\n' '$(MODE)' "$$i" "$$result"; \
++		printf '%s test %s: %s\n' '$(MODE)' "$$i" "$$result" >> "$$log"; \
++	done; \
++	echo "Logs saved in $(LOG_DIR)/"; \
++	exit $$failed
++
++# Run both suites even when the first one fails.
++test_all:
++	@failed=0; \
++	$(MAKE) test || failed=1; \
++	$(MAKE) test_reverse_sort || failed=1; \
++	exit $$failed
+ 
+-# Remove compiled program, GHC files and generated test logs
+ clean_all:
+ 	rm -f $(TARGET) *.o *.hi
+ 	rm -rf $(RESULTS_DIR)
+ 
+-# Remove only GHC temporary files
+ clean_trash:
+ 	rm -f *.o *.hi
+diff --git a/Lab_1/TSI_tasks/README.md b/Lab_1/TSI_tasks/README.md
+index 9446f75..d75bd3c 100644
+--- a/Lab_1/TSI_tasks/README.md
++++ b/Lab_1/TSI_tasks/README.md
+@@ -1,176 +1,63 @@
+ # TSI Task 1
+ 
+-Simple Haskell project with several build/run modes controlled through the Makefile.
++Run commands from `Lab_1/TSI_tasks`. Requirements: GHC, GNU Make,
++and standard shell utilities. No additional Haskell packages are needed.
+ 
+-## Requirements
+-
+-- GHC
+-- GNU Make
+-
+-## Build
+-
+-Default mode:
++## Build and select a task
+ 
+ ```bash
+ make
++printf '3 1 2\n' | ./main max
++printf '3 1 2\n' | ./main sort
+ ```
+ 
+-This compiles:
+-
+-```text
+-main.hs -> main
+-```
+-
+-The default mode uses the `#else` branch in `main.hs`.
+-
+-## Available modes
+-
+-### Default mode
+-
+-```bash
+-make
+-```
+-
+-or:
+-
+-```bash
+-make default
+-```
+-
+-Uses:
+-
+-```haskell
+-main = interact Task1.solve
+-```
+-
+-### Manual mode
+-
+-```bash
+-make manual
+-```
+-
+-Compiles with:
+-
+-```text
+--DMANUAL
+-```
+-
+-and uses the `#ifdef MANUAL` branch.
+-
+-### Read-file mode
+-
+-```bash
+-make read
+-```
+-
+-Compiles with:
+-
+-```text
+--DREADM
+-```
++`make` builds `main` from `main.hs`. Changes to any `.hs` file in this
++directory, including imported modules, trigger compilation with `ghc --make`.
+ 
+-and uses the `#ifdef READM` branch.
++The dispatcher interface selects `Task1.solve` with `max` (maximum value)
++and `Task_1_var_1.solve` with `sort` (descending list). Both read standard
++input through EOF. For interactive input, enter the numbers, press Enter,
++then Ctrl-D. Files can be supplied with `./main max < input.txt` or
++`./main sort < input.txt`.
+ 
+-### Super mode
+-
+-```bash
+-make super
+-```
+-
+-Compiles with:
+-
+-```text
+--DSUPERM
+-```
+-
+-and uses the `#ifdef SUPERM` branch.
+-
+-## Build and run
+-
+-You can build and immediately run a mode:
+-
+-```bash
+-make run
+-make run_manual
+-make run_read
+-make run_super
+-```
++**Current source limitation:** `main.hs` still uses the old CPP entry point
++and ignores command-line arguments. It must implement this dispatcher
++interface before both suites can pass. The Makefile no longer provides
++CPP mode targets (`manual`, `read`, `super`, or their run targets).
+ 
+ ## Automatic tests
+ 
+-Run all tests with:
+-
+-```bash
+-make test
+-```
+-
+-The Makefile runs 10 tests.
+-
+-Input files should be named:
++| Command | Runs | Logs |
++|---|---|---|
++| `make test` | 10 maximum fixtures using `./main max` | `test_results/results_1/` |
++| `make test_reverse_sort` | 10 sorting fixtures using `./main sort` | `test_results/results_reverse_sort/` |
++| `make test_all` | Both suites, even if the first fails | Both directories above |
+ 
+-```text
+-tests/task_1_test_1.txt
+-tests/task_1_test_2.txt
+-...
+-tests/task_1_test_10.txt
+-```
+-
+-Expected output files should be named:
++Maximum fixture pairs, for N from 1 through 10:
+ 
+ ```text
+-tests/task_1_test_1_expected.txt
+-tests/task_1_test_2_expected.txt
+-...
+-tests/task_1_test_10_expected.txt
++tests/test_1/task_1_test_N.txt
++tests/test_1/task_1_test_N_expected.txt
+ ```
+ 
+-For every test, Make prints either:
++Sorting fixture pairs:
+ 
+ ```text
+-Test N: SUCCESS
++tests/task1_reverse_sort_tests/tests/test_task1_reverse_sort_N.txt
++tests/task1_reverse_sort_tests/tests/expected_task1_reverse_sort_N.txt
+ ```
+ 
+-or:
++Each suite builds the executable if needed and reports SUCCESS or FAIL for
++every case. Each case has a `.log` file containing its result and either
++missing-fixture details or stderr, exit status, expected output, and actual
++output. Existing fixture and expected-output files are preserved.
+ 
+-```text
+-Test N: FAIL
+-```
+-
+-If a test fails, the expected and actual output are printed.
++An output mismatch, nonzero program exit (including a crash), or missing
++or unreadable fixture makes the suite return a nonzero exit status. The
++remaining cases still run. Output comparison ignores trailing newlines,
++as shell command substitution removes them; other whitespace is significant.
+ 
+ ## Cleanup
+ 
+-Remove GHC temporary files:
+-
+-```bash
+-make clean_trash
+-```
+-
+-This removes:
+-
+-```text
+-*.o
+-*.hi
+-```
+-
+-Remove the executable and all generated files:
+-
+-```bash
+-make clean_all
+-```
+-
+-## Quick command reference
+-
+-| Command | Description |
+-|---|---|
+-| `make` | Build default mode |
+-| `make manual` | Build manual mode |
+-| `make read` | Build read-file mode |
+-| `make super` | Build super mode |
+-| `make run` | Build and run default mode |
+-| `make run_manual` | Build and run manual mode |
+-| `make run_read` | Build and run read-file mode |
+-| `make run_super` | Build and run super mode |
+-| `make test` | Run all 10 automatic tests |
+-| `make clean_trash` | Remove `.o` and `.hi` files |
+-| `make clean_all` | Remove all generated files |
++- `make clean_trash`: remove `.o` and `.hi` compiler files.
++- `make clean_all`: also remove `main` and generated `test_results/` logs.
+diff --git a/Lab_1/TSI_tasks/main b/Lab_1/TSI_tasks/main
+index 68631c0..0ea803d 100755
+Binary files a/Lab_1/TSI_tasks/main and b/Lab_1/TSI_tasks/main differ
+diff --git a/Lab_1/TSI_tasks/main.hs b/Lab_1/TSI_tasks/main.hs
+index a7917ad..c57e3aa 100644
+--- a/Lab_1/TSI_tasks/main.hs
++++ b/Lab_1/TSI_tasks/main.hs
+@@ -1,71 +1,17 @@
+-{-# LANGUAGE CPP #-}
+--- the global idea is to make a main module that will accept other modeles for different tasks
+--- It should accept manual tests from the shell, also take a files as I/O for auto tests
+-
+--- let's try
+-
+ module Main where
+ 
+--- if in same folder compiler aka linker don't need additional flags - nice
++import System.Environment (getArgs)
++import System.Exit (exitFailure)
++import System.IO (hPutStrLn, stderr)
+ import qualified Task1
+ import qualified Task_1_var_1
+--- ok, here start some fuzzy crap, IO in hasskel :: IO () is something like void, but not exactly because it
+--- breaks the paradigm, so they called it here the "monad" it roots that it's some deep philosophy crap... after it for sure megrated to math
+--- and as the Hasskel is more math languge it came here. I don't want to follow this deeper.
+-    -- But anyway monads, here is something that goes out of pure functions and it may have effect of how the code is assambled.
+-manualMode :: IO ()
+-manualMode = do
+-    putStrLn "Manual mode enabled."
+-    putStrLn "Enter input:"
+-    input <- getLine
+-    
+-    -- later we can add here the block that will manipulate and parse the input as we need.
+-    
+-    -- for now let's try to just send back to stdout the stdin, later let's reverse the input, just for testing.
+-
+-    putStrLn input
+-
+--- End of manual mode
+-
+- -- just a blank will try to read files, parse it. and tast it via Makefile
+-readFileMode :: IO ()
+-readFileMode = do
+-    let fileName = "task_1.txt"
+-    putStrLn ("testing next file" ++ fileName)
+-
+-    input <- readFile fileName
+-
+-    putStrLn "output from file:"
+-    putStrLn input
+-
+--- Ok, I found out getContent function that can be used instead of all the thing that are up there.
+-
+-superMode :: IO ()
+-superMode = do
+-    input <- getContents
+-    putStrLn  (Task1.solve(input)) -- takes string and should return string
+-
+--- End of filereading module
+-
+-
+--- Ok after few days I found the way make all this thing with main = interact.
+--- Probobly this is best way to make a program as I wanted.
+-
+---                  *** Enerty point ***
+-
+---  ## I can use C preprocessor !
+ 
+--- here we can comment manual part and vise-versa with readFile part for manual and auto test the tasks
+ main :: IO ()
+-#ifdef MANUAL
+ main = do
+-    manualMode
+-#elif READM
+-main = do 
+-    readFileMode
+-#elif SUPERM
+-main = do 
+-    superMode
+-#else
+-main = interact Task_1_var_1.solve  
+-#endif
++    args <- getArgs
++    case args of
++        ["max"] -> interact Task1.solve
++        ["sort"] -> interact Task_1_var_1.solve
++        _ -> do
++            hPutStrLn stderr "Usage: ./main (max|sort)"
++            exitFailure
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_1.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_1.log
+index c45d584..09419e5 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_1.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_1.log
+@@ -1,3 +1,4 @@
+-Test 1: FAIL
++Exit status: 0
+ Expected: 5
+-Got:      5 4 3 2 1
++Got:      5
++max test 1: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_10.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_10.log
+index 66f6913..467e9c9 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_10.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_10.log
+@@ -1,3 +1,4 @@
+-Test 10: FAIL
++Exit status: 0
+ Expected: 108
+-Got:      108 42 23 16 15 8 4 -1 -100
++Got:      108
++max test 10: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_2.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_2.log
+index c503dec..91f07c4 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_2.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_2.log
+@@ -1,3 +1,4 @@
+-Test 2: FAIL
++Exit status: 0
+ Expected: 10
+-Got:      10 5 4 3 2
++Got:      10
++max test 2: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_3.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_3.log
+index 3d862b5..69e12e3 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_3.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_3.log
+@@ -1,3 +1,4 @@
+-Test 3: FAIL
++Exit status: 0
+ Expected: 99
+-Got:      99 5 4 2 1
++Got:      99
++max test 3: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_4.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_4.log
+index 483e240..e22c44f 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_4.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_4.log
+@@ -1,3 +1,4 @@
+-Test 4: FAIL
++Exit status: 0
+ Expected: -3
+-Got:      -3 -5 -10 -20 -40
++Got:      -3
++max test 4: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_5.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_5.log
+index 941c7de..6b26446 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_5.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_5.log
+@@ -1,3 +1,4 @@
+-Test 5: SUCCESS
++Exit status: 0
+ Expected: 5
+ Got:      5
++max test 5: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_6.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_6.log
+index 6f906ad..f1d331f 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_6.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_6.log
+@@ -1,3 +1,4 @@
+-Test 6: FAIL
++Exit status: 0
+ Expected: 7
+-Got:      7 7 7 7 7 7 7 7 7 7
++Got:      7
++max test 6: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_7.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_7.log
+index b246343..17a05e0 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_7.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_7.log
+@@ -1,3 +1,4 @@
+-Test 7: FAIL
++Exit status: 0
+ Expected: 0
+-Got:      0 -1 -2 -3 -4
++Got:      0
++max test 7: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_8.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_8.log
+index f735d94..ed9eb47 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_8.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_8.log
+@@ -1,3 +1,4 @@
+-Test 8: FAIL
++Exit status: 0
+ Expected: 12
+-Got:      12 12 6 3 0 -5 -8
++Got:      12
++max test 8: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_9.log b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_9.log
+index e0a1f82..277ab97 100644
+--- a/Lab_1/TSI_tasks/test_results/results_1/task_1_test_9.log
++++ b/Lab_1/TSI_tasks/test_results/results_1/task_1_test_9.log
+@@ -1,3 +1,4 @@
+-Test 9: FAIL
++Exit status: 0
+ Expected: 9999
+-Got:      9999 5000 4000 2000 1000
++Got:      9999
++max test 9: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_1.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_1.log
+index cf4ef6a..6397a10 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_1.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_1.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 1: SUCCESS
++Exit status: 0
+ Expected: 9 8 5 2 1
+ Got:      9 8 5 2 1
++sort test 1: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_10.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_10.log
+index ab88248..465f664 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_10.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_10.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 10: SUCCESS
++Exit status: 0
+ Expected: 99 56 34 23 12 7 1 0 -4
+ Got:      99 56 34 23 12 7 1 0 -4
++sort test 10: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_2.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_2.log
+index 1891f65..7ac062e 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_2.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_2.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 2: SUCCESS
++Exit status: 0
+ Expected: 10 9 8 7 6
+ Got:      10 9 8 7 6
++sort test 2: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_3.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_3.log
+index 2a9c51a..735b3f5 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_3.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_3.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 3: SUCCESS
++Exit status: 0
+ Expected: 5 4 3 2 1
+ Got:      5 4 3 2 1
++sort test 3: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_4.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_4.log
+index e2ec543..1bfd4d4 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_4.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_4.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 4: SUCCESS
++Exit status: 0
+ Expected: 8 3 0 -1 -5
+ Got:      8 3 0 -1 -5
++sort test 4: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_5.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_5.log
+index 0c939bd..2c61c4d 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_5.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_5.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 5: SUCCESS
++Exit status: 0
+ Expected: 7 7 4 4 2 2
+ Got:      7 7 4 4 2 2
++sort test 5: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_6.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_6.log
+index 67ea3f3..13fdc63 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_6.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_6.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 6: SUCCESS
++Exit status: 0
+ Expected: 42
+ Got:      42
++sort test 6: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_7.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_7.log
+index 0fadf47..c1d809d 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_7.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_7.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 7: SUCCESS
++Exit status: 0
+ Expected: 9 3
+ Got:      9 3
++sort test 7: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_8.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_8.log
+index fb10c59..b1edb1b 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_8.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_8.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 8: SUCCESS
++Exit status: 0
+ Expected: 100 50 25 0 -50 -100
+ Got:      100 50 25 0 -50 -100
++sort test 8: SUCCESS
+diff --git a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_9.log b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_9.log
+index a95726e..17eb0b9 100644
+--- a/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_9.log
++++ b/Lab_1/TSI_tasks/test_results/results_reverse_sort/test_task1_reverse_sort_9.log
+@@ -1,3 +1,4 @@
+-Reverse sort test 9: SUCCESS
++Exit status: 0
+ Expected: 6 6 6 6 6
+ Got:      6 6 6 6 6
++sort test 9: SUCCESS
