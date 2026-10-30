@@ -7,7 +7,7 @@ module Task4 where
 fac :: Integer -> Integer
 
 fac n
-    | n < 0     = error "Factorial can't be solved for negative integers input"
+    | n < 0     = error "ERROR: negative input"
     | n == 0    = 1
     | otherwise = n * fac (n - 1)
 
