@@ -80,6 +80,7 @@ main = interact Task4.solve
 #elif defined(TASK5)
 main = interact Task5.solve
 #elif defined(TASK6)
+main = interact Task6.solve
 #else
 main = interact Task_1_var_1.solve  
 #endif
