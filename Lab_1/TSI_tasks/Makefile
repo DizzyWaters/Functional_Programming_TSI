@@ -18,6 +18,9 @@ task2:
 # task 3
 task3:
 	$(GHC) -fforce-recomp -DTASK3 $(SRC) -o $(TARGET)
+# task 4
+task4:
+	$(GHC) -fforce-recomp -DTASK4 $(SRC) -o $(TARGET)
 
 .PHONY: all default manual read super run run_manual run_read run_super \
         test test_reverse_sort test_all clean_all clean_trash \

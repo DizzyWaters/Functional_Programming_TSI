@@ -2,7 +2,7 @@
 
 -- seems factorial function aka !n
 
-module Task2 where
+module Task4 where
 
 fac :: Integer -> Integer
 
