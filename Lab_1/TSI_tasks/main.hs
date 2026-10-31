@@ -15,6 +15,7 @@ import qualified Task4
 import qualified Task5
 import qualified Task6
 import qualified Task7
+import qualified Task8
 -- ok, here start some fuzzy crap, IO in hasskel :: IO () is something like void, but not exactly because it
 -- breaks the paradigm, so they called it here the "monad" it roots that it's some deep philosophy crap... after it for sure megrated to math
 -- and as the Hasskel is more math languge it came here. I don't want to follow this deeper.
@@ -84,6 +85,8 @@ main = interact Task5.solve
 main = interact Task6.solve
 #elif defined(TASK7)
 main = interact Task7.solve
+#elif defined(TASK8)
+main = interact Task8.solve
 #else
 main = interact Task_1_var_1.solve  
 #endif
