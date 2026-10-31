@@ -2,6 +2,7 @@ TARGET = main
 SRC = main.hs
 GHC = ghc
 
+# tests
 TEST1_DIR = tests/test_1
 TASK2_TEST_DIR = tests/task2_tests
 REVERSE_TEST_DIR = tests/task1_reverse_sort_tests/tests
@@ -10,7 +11,9 @@ TASK3_TEST_DIR = tests/task3_tests
 TASK4_TEST_DIR = tests/task4_tests
 TASK5_TEST_DIR = tests/task5_tests
 TASK6_TEST_DIR = tests/task6_tests
+TASK7_TEST_DIR = tests/task7_tests
 
+#tests results
 RESULTS_DIR = test_results
 TEST1_RESULTS_DIR = $(RESULTS_DIR)/results_1
 REVERSE_RESULTS_DIR = $(RESULTS_DIR)/results_reverse_sort
@@ -18,6 +21,9 @@ TASK3_RESULTS_DIR = test_results/results_3
 TASK4_RESULTS_DIR = test_results/results_4
 TASK5_RESULTS_DIR = test_results/results_5
 TASK6_RESULTS_DIR = test_results/results_6
+TASK7_RESULTS_DIR = test_results/results_7
+
+# Here comes helpers for explisit compilations
 # task 2
 task2:
 	$(GHC) -fforce-recomp -DTASK2 $(SRC) -o $(TARGET)
@@ -33,6 +39,9 @@ task5:
 # task 6
 task6:
 	$(GHC) -fforce-recomp -DTASK6 $(SRC) -o $(TARGET)	
+# task 7
+task7:
+	$(GHC) -fforce-recomp -DTASK7 $(SRC) -o $(TARGET)
 
 .PHONY: all default manual read super run run_manual run_read run_super \
         test test_reverse_sort test_all clean_all clean_trash \
@@ -210,6 +219,26 @@ test_task6: task6
 		fi; \
 	done; \
 	exit $$failed
+
+# Automh tests for Task 7
+test_task7: task7
+	@mkdir -p $(TASK7_RESULTS_DIR)
+	@failed=0; \
+	for i in 1 2 3 4 5 6 7 8 9 10; do \
+		input="$(TASK7_TEST_DIR)/task_7_test$$i.txt"; \
+		expected="$(TASK7_TEST_DIR)/task_7_test$${i}_expected.txt"; \
+		actual="$(TASK7_RESULTS_DIR)/task_7_test$$i.log"; \
+		if [ -f "$$input" ] && [ -f "$$expected" ] \
+		   && ./$(TARGET) < "$$input" > "$$actual" \
+		   && cmp -s "$$expected" "$$actual"; then \
+			echo "Task 7 test $$i: SUCCESS"; \
+		else \
+			echo "Task 7 test $$i: FAIL"; \
+			failed=1; \
+		fi; \
+	done; \
+	exit $$failed
+
 
 # Run both test suites
 test_all: test test_reverse_sort

@@ -37,5 +37,4 @@ solve input =
         ["property", value, tree] ->
             show (property (read value :: Int)
                            (read tree :: Tree Int))
-
         _ -> error "ERROR: invalid input"
