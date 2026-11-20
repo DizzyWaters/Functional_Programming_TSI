@@ -15,6 +15,17 @@ object Lab3 {
     }
   }
 
+// tests to task 1
+
+def testTask1(): Unit = {
+  assert(fibs(10) == Vector(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
+  assert(fibs(5) == Vector(1, 2, 3, 5, 8))
+  assert(fibs(1) == Vector(1))
+  assert(fibs(0) == Vector.empty[Int])
+
+  println("Task 1: All tests passed!")
+}
+
 // Task 2: flatMap and map
 
 case class Address(street: String, city: String,
@@ -23,8 +34,7 @@ case class Address(street: String, city: String,
 case class Person(first: String, last: String,
                   address: Option[Address])
 
-def task2(): Unit = {
-
+def task2(): Seq[String] = {
   val p1 = Some(Person("Fred", "Bloggs", None))
 
   val p2 = Some(Person("Simon", "Jones",
@@ -39,17 +49,24 @@ def task2(): Unit = {
     .flatMap(personOpt => personOpt.toSeq)
     .flatMap(person => person.address.toSeq)
     .map(address => address.zipCode)
-
-  println("Task 2: " + result)
+  result
 }
+// Tests to task 2
+def testTask2(): Unit = {
+  assert(task2() == Seq("12345"))
+  println("Task 2: All tests passed!")
+}
+
 
 // ********** main ***********
 
-  def main(args: Array[String]): Unit = {
-    println("Task 1: Fibonacci")
-    println(fibs(10))
-    task2()
-  }
+def main(args: Array[String]): Unit = {
+  println("Task 1: Fibonacci")
+  println(fibs(10))
+  testTask1()
 
-
+  println("\nTask 2: flatMap and map")
+println("Task 2: " + task2())
+testTask2()
+}
 }
