@@ -1,5 +1,9 @@
 import scala.annotation.tailrec
 
+// dependencies for task 6
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 // Task 1: Fibonacci
 
@@ -92,6 +96,58 @@ def testTask4(): Unit = {
   println("Task 4: All tests passed!")
 }
 
+// Task 5: Pattern matching with guards
+
+def describeSign(n: Int): String = n match {
+  case 0 => "Zero"
+  case x if x > 0 => "Positive"
+  case _ => "Negative"
+}
+
+
+// Tests for Task 5
+
+def testTask5(): Unit = {
+  assert(describeSign(0) == "Zero")
+  assert(describeSign(10) == "Positive")
+  assert(describeSign(-5) == "Negative")
+  assert(describeSign(1) == "Positive")
+  assert(describeSign(-1) == "Negative")
+
+  println("Task 5: All tests passed!")
+}
+
+// Task 6: Asynchronous programming with Futures
+
+def task6(): Future[String] = {
+
+  val fa = Future { 1 }
+  val fb = Future { 2 }
+  val fc = Future { 3 }
+  val fs = Future { "The answer is" }
+
+  for {
+    a <- fa
+    b <- fb
+    c <- fc
+    s <- fs
+  } yield {
+    val sum = a + b + c
+    s"$s $sum"
+  }
+}
+
+
+// Tests for Task 6
+
+def testTask6(): Unit = {
+  val result = Await.result(task6(), 10.seconds)
+
+  assert(result == "The answer is 6")
+
+  println("Task 6: All tests passed!")
+}
+
 // ********** main ***********
 
 def main(args: Array[String]): Unit = {
@@ -113,6 +169,20 @@ def main(args: Array[String]): Unit = {
   println("10 / 0 = " + safeDivOption(10, 0))
   println("Flatten result: " + task4())
   testTask4()
+
+  println("\nTask 5: Pattern matching")
+  println("0: " + describeSign(0))
+  println("10: " + describeSign(10))
+  println("-5: " + describeSign(-5))
+  testTask5()
+
+  println("\nTask 6: Asynchronous Futures")
+
+  val result6 = Await.result(task6(), 10.seconds)
+
+  println(result6)
+
+testTask6()
 
 }
 }
