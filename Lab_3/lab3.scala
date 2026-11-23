@@ -57,6 +57,20 @@ def testTask2(): Unit = {
   println("Task 2: All tests passed!")
 }
 
+// Task 3: Return type inference
+
+def safeDiv(n: Int, d: Int) =
+  if (d == 0) None else n / d
+
+// Tests for Task 3
+
+def testTask3(): Unit = {
+  assert(safeDiv(10, 2) == 5)
+  assert(safeDiv(10, 0) == None)
+  assert(safeDiv(9, 3) == 3)
+
+  println("Task 3: All tests passed!")
+}
 
 // ********** main ***********
 
@@ -66,7 +80,13 @@ def main(args: Array[String]): Unit = {
   testTask1()
 
   println("\nTask 2: flatMap and map")
-println("Task 2: " + task2())
-testTask2()
+  println("Task 2: " + task2())
+  testTask2()
+
+  println("\nTask 3: Return type inference")
+  println("10 / 2 = " + safeDiv(10, 2))
+  println("10 / 0 = " + safeDiv(10, 0))
+  testTask3()
+
 }
 }
