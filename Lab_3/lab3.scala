@@ -72,6 +72,26 @@ def testTask3(): Unit = {
   println("Task 3: All tests passed!")
 }
 
+// Task 4: Option[Int]
+
+def safeDivOption(n: Int, d: Int): Option[Int] =
+  if (d == 0) None else Some(n / d)
+
+def task4(): List[Int] = {
+  List(0, 1, 2).map(safeDivOption(5, _)).flatten
+}
+
+// Tests for Task 4
+
+def testTask4(): Unit = {
+  assert(safeDivOption(10, 2) == Some(5))
+  assert(safeDivOption(10, 0) == None)
+  assert(safeDivOption(9, 3) == Some(3))
+  assert(task4() == List(5, 2))
+
+  println("Task 4: All tests passed!")
+}
+
 // ********** main ***********
 
 def main(args: Array[String]): Unit = {
@@ -87,6 +107,12 @@ def main(args: Array[String]): Unit = {
   println("10 / 2 = " + safeDiv(10, 2))
   println("10 / 0 = " + safeDiv(10, 0))
   testTask3()
+
+  println("\nTask 4: Option[Int]")
+  println("10 / 2 = " + safeDivOption(10, 2))
+  println("10 / 0 = " + safeDivOption(10, 0))
+  println("Flatten result: " + task4())
+  testTask4()
 
 }
 }
